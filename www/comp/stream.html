@@ -1,23 +1,25 @@
 <script>
-	addEvent( $('#bt_next'),'click',()=>{ 
-		if( _state.peer ){
-			_state.peer.destroy(); delete _state.peer;			
-		} else {
-			$('#bt_next').innerHTML = 'connecting';
-			createPeer(); waitPeer( _state.peer.id ); 
-		}
-	});
+	connect_button = function(){
+		addEvent( $('#bt_next'),'click',()=>{ 
+			if( _state.peer ){
+				_state.peer.destroy(); delete _state.peer;			
+			} else {
+				$('#bt_next').innerHTML = 'connecting';
+				createPeer(); waitPeer( _state.peer.id ); 
+			}
+		});
+	}
 </script>
 
 <div id="video-chat" class="uk-width-1-1 uk-height-1-1 uk-inline" >
 	<div class="uk-width-expand uk-inline" style="height:100%">
-		<video id="vid-gss" class="uk-width-1-1 border" style="height:100%" autoplay mute></video>
+		<video id="vid-gss" class="uk-width-1-1 border" style="height:100%" autoplay></video>
 		<a id="bt_next" class="uk-button uk-button-primary uk-position-top-right uk-position-medium"> disconnected </a>
 	</div>
 			
 	<div class="uk-width-expand uk-inline uk-position-bottom-right uk-position-medium">
 		<video id="vid-own" class="uk-width-1-2 uk-width-1-3@s border  uk-height-small" 
-			   style="max-width:300px; object-fit:cover;" autoplay mute></video>
+			   style="max-width:300px; object-fit:cover;" autoplay muted></video>
 	</div>
 </div>
 

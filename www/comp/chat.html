@@ -1,6 +1,6 @@
 <script>
 	event = addEvent( $('#bt_submit'),'click',()=>{ 
-		const msg = $('#in_submit').value
+		const msg = $('#in_submit').value; if( msg==='' ) return 0;
 		_state.peerClient.send( msg ); $('#in_submit').value = '';
 		$('#messages').innerHTML += `
 			<div class="uk-inline uk-flex uk-flex-right"><div class="uk-button-default uk-padding-small"> 
@@ -19,6 +19,7 @@
 	}
 	
 	recived = function(msg){
+		if( msg==='' ) return 0;
 		$('#messages').innerHTML += `
 			<div class="uk-inline uk-flex uk-flex-left"><div class="uk-button-default uk-padding-small"> 
 				${msg} </div></div>
@@ -39,7 +40,7 @@
 	<div id="messages" class="uk-flex uk-flex-column" style="overflow:auto; height:93%"></div>
 	
 	<div class="uk-flex uk-position-bottom uk-position-small uk-child-width-expand">
-		<input id="bt_submit" class="uk-button uk-button-secondary uk-width-1-3" value="send">
+		<a id="bt_submit" class="uk-button uk-button-secondary uk-width-1-3">send</a>
 		<input id="in_submit" class="uk-input" type="text" placeholder="send something" />
 	</div>
 	

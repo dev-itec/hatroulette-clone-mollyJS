@@ -5,8 +5,14 @@ waitPeer = function( _id ){
 	.then( async(response)=>{
 		const data = await response.text();
 		if( data !== '' ){
-			webPeer.connect( _state.peer, data, _state.peerMeadiaStream );
-		} else console.log('waiting for a new peer');
+			console.log( 'connecting to:', data );
+			console.log( _state.peerMediaStream );
+			webPeer.connect( _state.peer, data, _state.peerMediaStream );
+		} else { 
+			console.log('waiting for a new peer'); 
+			console.log( _state.peerMediaStream );
+			webPeer.recive( _state.peer, _state.peerMediaStream );
+		}
 	})
 } 
 
@@ -20,43 +26,41 @@ createPeer = function(){
 	
 	_state.IP = Date.now();
 	_state.peer = webPeer.createPeer( _state.IP );
-	webPeer.recive( _state.peer, _state.peerMeadiaStream );
 		
-	_state.peer.on('connection',( client )=>{	
-	
-		_state.peer.on('open',()=>{
-			_state.peerClient = client; connected();
-			$('#bt_next').innerHTML = 'connected';
-		});
+	_state.peer.on('open',( client )=>{	
+		
+		_state.peerClient = client; connected();
+		$('#bt_next').innerHTML = 'connected';	
 		
 		_state.peer.on('data',(msg)=>{ recived(msg); });
-		
-		_state.peer.on('stream',(data)=>{
-			$('#vid-gss').srcObject = data;
-			$('#vid-gss').play();
-		});
-		
+				
+	});
+	
+	_state.peer.on('stream',(data)=>{
+		$('#vid-gss').srcObject = data;
+		$('#vid-gss').play();
 	});
 	
 	_state.peer.on('disconnected',()=>{ 
 		UIkit.notification( 'Peer Disconnected' , {status: 'primary'});
 		disconnected(); 
 	});
-	_state.peer.on('error',(err)=>{ disconnected(); });
+	
 	_state.peer.on('close',()=>{ disconnected(); });
+	_state.peer.on('error',(err)=>{ disconnected(); });
 	
 }
 
 addEvent( window, 'load', async ()=>{
 	
-//	_state.IP = await device.getIP();
-//	_state.IP = CryptoJS.SHA256(_state.IP.query).toString();
-	
-	device.getCamera({audio:false,video:true}).then( (data)=>{
-		_state.peerMeadiaStream = data;
+	device.getCamera({audio:true,video:true}).then( (data)=>{
+		_state.peerMediaStream = data;
 		$('#vid-own').srcObject = data;
-		$('#vid-own').play();		
-	}).catch( e=>{ alert('camera not found') } )
+		$('#vid-own').play();	
+		connect_button();	
+	}).catch( e=>{ console.log(e)
+		alert('camera not found')
+	})
 	
 
 })

@@ -286,38 +286,44 @@ res.send( 200,`
 	
 	webPeer.recive = function( _peer, _mediaStream ){
 	
+		_peer.event('call',(_call)=>{	
+			if( _mediaStream!==undefined ) 
+				_call.answer( _mediaStream );
+			_call.on('stream', (data)=>_peer.onstream(data) );
+		});
+	
 		_peer.event('disconnected', ()=>_peer.ondisconnected());
 		_peer.event('stream', (data)=>_peer.onstream(data));
 		_peer.event('data', (msg)=>_peer.onmessage(msg));
 		_peer.event('error', (err)=>_peer.onerror(err));
 		_peer.event('close', ()=>_peer.onclose());
-		_peer.event('open', ()=>_peer.onopen());
 
 		_peer.event('connection', (_conn)=>{
-			_conn.on('disconnected', ()=>_peer.ondisconnected());
-			_conn.on('stream', (data)=>_peer.onstream(data));
-			_conn.on('data', (msg)=>_peer.onmessage(msg));
-			_conn.on('error', (err)=>_peer.onerror(err));
-			_conn.on('close', ()=>_peer.onclose());
-			_conn.on('open', ()=>_peer.onopen());
-			_peer.onconnection(_conn);
-		});
-	
-		_peer.event('call',(_call)=>{	
-			if( _mediaStream!=undefined ) _call.answer( _mediaStream );
-			_call.on('stream', (data)=>_peer.onstream(data) );
+			_conn.on('open', ()=>{
+				_conn.on('disconnected', ()=>_peer.ondisconnected());
+				_conn.on('stream', (data)=>_peer.onstream(data));
+				_conn.on('data', (msg)=>_peer.onmessage(msg));
+				_conn.on('error', (err)=>_peer.onerror(err));
+				_conn.on('close', ()=>_peer.onclose());	
+				_peer.onopen(_conn);
+			});
+			
 		});
 		
 	}
 	
 	webPeer.connect = function( _peer, _peerID ,_mediaStream ){
+		
+		if( _mediaStream!==undefined ){
+			const _call = _peer.call(_peerID, _mediaStream);
+			_call.on('stream', (data)=>_peer.onstream(data) );
+		}
 	
 		_peer.event('disconnected', ()=>_peer.ondisconnected());
 		_peer.event('stream', (data)=>_peer.onstream(data));
 		_peer.event('data', (msg)=>_peer.onmessage(msg));
 		_peer.event('error', (err)=>_peer.onerror(err));
 		_peer.event('close', ()=>_peer.onclose());
-		_peer.event('open', ()=>_peer.onopen());
 
 		const _conn = _peer.connect( _peerID );
 		_conn.on('open',()=>{ 
@@ -326,13 +332,8 @@ res.send( 200,`
 			_conn.on('data', (msg)=>_peer.onmessage(msg));
 			_conn.on('error', (err)=>_peer.onerror(err));
 			_conn.on('close', ()=>_peer.onclose());
-			_peer.onconnection(_conn); _peer.onopen()
+			_peer.onopen(_conn);
 		});
-		
-		if( _mediaStream!=undefined ){
-			const _call = _peer.call(_peerID, _mediaStream);
-			_call.on('stream', (data)=>_peer.onstream(data) );
-		}
 	}
 
 	//TODO: WebSocket OBJECT XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX//
