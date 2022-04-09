@@ -1,0 +1,2 @@
+# MollyJS-Backend-Core
+Node-MollyJS is a free and openSource framework for nodeJS to create Complex Backend projects Using small and simple js modules. Node-MollyJS was created because of the complexity of ExpressJS while we are dealing with complex projects. So, here is where MollyJS gets in because this framework allows you to split the problem into small solutions called modules. NodeJS Backend Made Easy

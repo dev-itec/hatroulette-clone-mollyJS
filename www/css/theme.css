@@ -1,0 +1,26 @@
+video{
+	background: #222;
+	filter: contrast(1.2);
+}
+
+.border{
+	border-radius: 10px;
+	box-shadow: 5.3px 10.6px 10.6px hsl(0deg 0% 0% / 0.34);
+}
+
+.uk-button-primary{
+	background: dodgerblue!important;
+	border-radius: 10px;
+}
+
+.uk-button-primary:hover{	
+	background: #00000000!important;
+	border: solid white 1px;
+	border-radius: 10px;
+}
+
+.uk-button-secondary:hover{	
+	background: #00000000!important;
+	border: solid #222 1px;
+	color: #222!important;
+}
