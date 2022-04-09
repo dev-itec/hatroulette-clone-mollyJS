@@ -17,9 +17,9 @@ waitPeer = function( _id ){
 } 
 
 disconnected = function(){ 
-	clear(); 
+	_state.peerClient.close();	
+	_state.peer.destroy(); clear(); 
 	$('#bt_next').innerHTML = 'disconnected';
-	_state.peer.destroy(); delete _state.peer;	
 }
 
 createPeer = function(){
@@ -33,6 +33,10 @@ createPeer = function(){
 		$('#bt_next').innerHTML = 'connected';	
 		
 		_state.peer.on('data',(msg)=>{ recived(msg); });
+		
+		client.on('close',()=>{ disconnected();	});
+		client.on('error',()=>{ disconnected(); });
+		client.on('disconnected',()=>{ disconnected(); });
 				
 	});
 	
@@ -41,19 +45,16 @@ createPeer = function(){
 		$('#vid-gss').play();
 	});
 	
-	_state.peer.on('disconnected',()=>{ 
-		UIkit.notification( 'Peer Disconnected' , {status: 'primary'});
-		disconnected(); 
-	});
-	
 	_state.peer.on('close',()=>{ disconnected(); });
 	_state.peer.on('error',(err)=>{ disconnected(); });
+	_state.peer.on('disconnected',()=>{ disconnected(); });
 	
 }
 
 addEvent( window, 'load', async ()=>{
 	
-	device.getCamera({audio:true,video:true}).then( (data)=>{
+	device.getCamera({ audio:false, video:true })
+	.then( (data)=>{
 		_state.peerMediaStream = data;
 		$('#vid-own').srcObject = data;
 		$('#vid-own').play();	
